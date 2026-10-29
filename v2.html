@@ -48,7 +48,9 @@
   .counter.green { background: var(--green-pale); color: var(--green-dark); }
   .counter.amber { background: var(--amber-pale); color: var(--amber-dark); }
   .counter.red { background: var(--red-pale); color: var(--red-dark); }
-  .plus { display:grid; place-items:center; width:50px; height:50px; border-radius:50%; color:white; font-size:34px; line-height:1; font-weight:300; margin-bottom:12px; box-shadow: 0 5px 12px #10243a12; }
+  .plus { position:relative; width:50px; height:50px; border-radius:50%; margin-bottom:12px; box-shadow: 0 5px 12px #10243a12; }
+  .plus::before, .plus::after { content:""; position:absolute; left:50%; top:50%; width:22px; height:3px; border-radius:2px; background:white; transform:translate(-50%, -50%); }
+  .plus::after { transform:translate(-50%, -50%) rotate(90deg); }
   .green .plus { background: var(--green); }
   .amber .plus { background: var(--amber); }
   .red .plus { background: var(--red); }
@@ -124,17 +126,17 @@
 
   <section class="counter-grid" aria-label="Log calls">
     <button class="counter green" id="green-button" type="button" aria-label="Log one Sales Call">
-      <span class="plus" aria-hidden="true">+</span>
+      <span class="plus" aria-hidden="true"></span>
       <span class="counter-label">Sales</span>
       <span class="counter-number" id="green-count">0</span>
     </button>
     <button class="counter amber" id="amber-button" type="button" aria-label="Log one Complaint Call">
-      <span class="plus" aria-hidden="true">+</span>
+      <span class="plus" aria-hidden="true"></span>
       <span class="counter-label">Complaint</span>
       <span class="counter-number" id="amber-count">0</span>
     </button>
     <button class="counter red" id="red-button" type="button" aria-label="Log one Cease Call">
-      <span class="plus" aria-hidden="true">+</span>
+      <span class="plus" aria-hidden="true"></span>
       <span class="counter-label">Cease</span>
       <span class="counter-number" id="red-count">0</span>
     </button>
