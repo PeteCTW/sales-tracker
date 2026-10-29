@@ -21,21 +21,23 @@
     --red: #f04e55;
     --red-dark: #a91e2b;
     --red-pale: #ffeaec;
+    --blue: #3567d6;
     --shadow: 0 12px 34px rgba(25, 43, 69, .08);
   }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   body {
     margin: 0; min-height: 100vh; padding: 22px 16px;
     background: linear-gradient(145deg, #f8fafc, #edf2f8);
     color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
-  button, input { font: inherit; }
+  button, input, select { font: inherit; }
   button { cursor: pointer; }
   .app { max-width: 440px; margin: 0 auto; }
-  .topbar { display:flex; align-items:center; justify-content:space-between; margin: 12px 2px 22px; }
+  .topbar { display:flex; align-items:center; justify-content:space-between; gap:10px; margin: 12px 2px 22px; }
   h1 { font-size: 28px; letter-spacing: -.7px; margin: 0; font-weight: 760; }
   .subtle { color: var(--muted); font-size: 14px; margin-top: 5px; }
-  .icon-button { border: 1px solid var(--line); background: white; color: var(--ink); border-radius: 13px; width: 44px; height: 44px; font-size: 20px; box-shadow: 0 3px 12px #1c35500a; display:grid; place-items:center; padding:0; }
+  .icon-button { border: 1px solid var(--line); background: white; color: var(--ink); border-radius: 13px; width: 44px; height: 44px; font-size: 20px; box-shadow: 0 3px 12px #1c35500a; display:grid; place-items:center; padding:0; flex-shrink:0; }
   .icon-button:active { transform: scale(.94); }
   .top-actions { display:flex; gap:8px; }
   .counter-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -56,7 +58,21 @@
   .red .plus { background: var(--red); }
   .counter-label { font-size:15px; font-weight:700; }
   .counter-number { font-size:40px; line-height:1.1; font-weight:780; margin-top:8px; font-variant-numeric: tabular-nums; }
-  .split-card { background: white; border-radius: 22px; margin-top: 14px; padding: 18px 18px; box-shadow: var(--shadow); }
+  .card, .split-card { background: white; border-radius: 22px; margin-top: 14px; padding: 18px 18px; box-shadow: var(--shadow); }
+  .card-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  h3 { margin:0; font-size:16px; letter-spacing:-.2px; }
+  .link-button { border:0; background:transparent; color:var(--blue); font-weight:700; padding:4px 2px; }
+  .target-list { display:grid; gap:14px; }
+  .target-row { display:grid; gap:7px; }
+  .target-top { display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:14px; }
+  .target-top span { color:var(--muted); }
+  .target-top strong { font-variant-numeric:tabular-nums; }
+  .target-top small { color:var(--muted); font-weight:500; }
+  .bar { height:8px; border-radius:99px; background:var(--surface); overflow:hidden; }
+  .bar span { display:block; height:100%; border-radius:99px; background:var(--blue); transition: width .25s ease; }
+  .target-row.met .bar span { background:var(--green); }
+  .target-row.met strong { color:var(--green-dark); }
+  .muted-note { color:var(--muted); font-size:14px; margin:0; }
   .split-layout { display:grid; grid-template-columns: 122px 1fr; gap: 22px; align-items:center; }
   .legend { display:grid; gap:10px; }
   .legend-row { display:flex; align-items:center; gap:10px; }
@@ -82,23 +98,52 @@
   @keyframes rise { from { transform:translateY(16px); opacity:.7; } to { transform:translateY(0); opacity:1; } }
   .modal-head { display:flex; align-items:flex-start; gap:12px; margin-bottom:22px; }
   .modal-icon { width:48px; height:48px; display:grid; place-items:center; border-radius:16px; background:var(--green-pale); color:var(--green); font-size:22px; flex-shrink:0; }
+  .modal-icon.amber { background:var(--amber-pale); color:var(--amber); }
+  .modal-icon.red { background:var(--red-pale); color:var(--red); }
+  .modal-icon.neutral { background:var(--surface); color:var(--ink); }
+  .modal-icon .plus { width:28px; height:28px; margin:0; box-shadow:none; background:currentColor; }
+  .modal-icon .plus::before, .modal-icon .plus::after { width:13px; height:2.5px; }
   h2 { font-size:21px; margin:2px 0 0; letter-spacing:-.35px; }
   .modal-desc { color:var(--muted); font-size:14px; line-height:1.45; margin-top:5px; }
   .close { margin-left:auto; border:0; background:transparent; color:var(--muted); font-size:27px; line-height:1; padding:0 2px; }
   .fields { display:grid; gap:15px; }
   .field label { display:block; color:var(--muted); font-size:13px; margin-bottom:7px; }
   .input-wrap { position:relative; }
-  .field input { width:100%; min-height:50px; border:1px solid var(--line); border-radius:13px; padding:12px 44px 12px 14px; color:var(--ink); background:#fbfcfe; outline:none; }
-  .field input:focus { border-color:#7fae9b; box-shadow:0 0 0 3px #159b6917; }
+  .field input, .field select { width:100%; min-height:50px; border:1px solid var(--line); border-radius:13px; padding:12px 44px 12px 14px; color:var(--ink); background:#fbfcfe; outline:none; -webkit-appearance:none; appearance:none; }
+  .field input:focus, .field select:focus { border-color:#7fae9b; box-shadow:0 0 0 3px #159b6917; }
+  .field select:disabled { color:var(--muted); }
   .suffix { position:absolute; right:15px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; }
+  .prefix { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; }
+  .has-prefix input { padding-left:30px; }
+  .segmented { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px; }
+  .segmented button { min-height:52px; border:1px solid var(--line); border-radius:14px; background:#fbfcfe; color:var(--ink); font-weight:700; }
+  .segmented button[aria-checked="true"] { background:var(--ink); border-color:var(--ink); color:white; }
   .result { margin-top:19px; background:linear-gradient(120deg, #e8f8f2, #f0faf7); border-radius:17px; padding:17px 18px; }
   .result-label { color:var(--green-dark); font-size:14px; font-weight:700; }
   .result-number { color:var(--green); font-size:42px; line-height:1.1; font-weight:800; margin:5px 0 3px; font-variant-numeric:tabular-nums; }
   .result-note { color:#648b80; font-size:13px; line-height:1.4; }
   .done { width:100%; border:0; border-radius:16px; min-height:54px; background:var(--ink); color:white; font-weight:700; margin-top:18px; }
+  .done:disabled { opacity:.35; cursor:default; }
+  .done.secondary { background:var(--surface); color:var(--ink); }
+  .button-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .admin-section + .admin-section { border-top:1px solid var(--line); margin-top:18px; padding-top:18px; }
+  .admin-section .hint { color:var(--muted); font-size:13px; margin:4px 0 0; line-height:1.4; }
+  .item-list { list-style:none; margin:12px 0 10px; padding:0; display:grid; gap:6px; }
+  .item-list li { display:flex; align-items:center; gap:10px; background:var(--surface); border-radius:12px; padding:6px 6px 6px 14px; min-height:44px; font-size:15px; }
+  .item-list li span { flex:1; overflow-wrap:anywhere; }
+  .item-list li small { color:var(--muted); font-size:12px; }
+  .item-list li.empty { background:transparent; padding:0; min-height:0; color:var(--muted); font-size:14px; }
+  .remove { border:0; background:transparent; color:var(--muted); font-size:22px; line-height:1; width:34px; height:34px; border-radius:9px; flex-shrink:0; }
+  .remove:active { background:var(--line); }
+  .add-row { display:flex; gap:8px; }
+  .add-row input, .add-row select { flex:1; min-width:0; min-height:46px; border:1px solid var(--line); border-radius:12px; padding:10px 12px; background:#fbfcfe; color:var(--ink); }
+  .add-row button { border:0; border-radius:12px; padding:0 16px; background:var(--ink); color:white; font-weight:700; }
+  .add-row button:disabled, .add-row select:disabled { opacity:.4; cursor:default; }
   @media (max-width:360px) {
     body { padding:15px 12px; }
     h1 { font-size:25px; }
+    .icon-button { width:40px; height:40px; }
+    .top-actions { gap:6px; }
     .counter { min-height:160px; }
     .counter-label { font-size:14px; }
     .counter-number { font-size:34px; }
@@ -120,26 +165,35 @@
     </div>
     <div class="top-actions">
     <button class="icon-button" id="export-data" type="button" aria-label="Export or share all data" title="Export / share"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button>
-    <button class="icon-button" id="reset-counts" type="button" aria-label="Reset counts" title="Reset counts"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 5.66"/><path d="M20 4v7h-7"/></svg></button>
+    <button class="icon-button" id="reset-counts" type="button" aria-label="Reset this month's calls" title="Reset this month's calls"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 5.66"/><path d="M20 4v7h-7"/></svg></button>
+    <button class="icon-button" id="open-admin" type="button" aria-label="Admin" title="Admin"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></svg></button>
     </div>
   </header>
 
   <section class="counter-grid" aria-label="Log calls">
-    <button class="counter green" id="green-button" type="button" aria-label="Log one Sales Call">
+    <button class="counter green" id="green-button" type="button" aria-label="Log a Sales call">
       <span class="plus" aria-hidden="true"></span>
       <span class="counter-label">Sales</span>
       <span class="counter-number" id="green-count">0</span>
     </button>
-    <button class="counter amber" id="amber-button" type="button" aria-label="Log one Complaint Call">
+    <button class="counter amber" id="amber-button" type="button" aria-label="Log a Complaint call">
       <span class="plus" aria-hidden="true"></span>
       <span class="counter-label">Complaint</span>
       <span class="counter-number" id="amber-count">0</span>
     </button>
-    <button class="counter red" id="red-button" type="button" aria-label="Log one Cease Call">
+    <button class="counter red" id="red-button" type="button" aria-label="Log a Cease call">
       <span class="plus" aria-hidden="true"></span>
       <span class="counter-label">Cease</span>
       <span class="counter-number" id="red-count">0</span>
     </button>
+  </section>
+
+  <section class="card" id="targets-card" aria-labelledby="targets-heading" hidden>
+    <div class="card-head">
+      <h3 id="targets-heading">Targets</h3>
+      <button class="link-button" id="edit-targets" type="button">Edit</button>
+    </div>
+    <div class="target-list" id="target-list"></div>
   </section>
 
   <section class="split-card" aria-label="Call split comparison">
@@ -162,6 +216,110 @@
   </button>
 </main>
 
+<!-- Call outcome -->
+<div class="overlay" id="outcome-overlay" role="dialog" aria-modal="true" aria-labelledby="outcome-title">
+  <section class="modal">
+    <div class="modal-head">
+      <div class="modal-icon" id="outcome-icon" aria-hidden="true"><span class="plus"></span></div>
+      <div>
+        <h2 id="outcome-title">Call outcome</h2>
+        <div class="modal-desc" id="outcome-desc">Sales call</div>
+      </div>
+      <button class="close" type="button" data-close aria-label="Cancel">×</button>
+    </div>
+
+    <div class="segmented" role="radiogroup" aria-label="Outcome">
+      <button type="button" role="radio" data-outcome="sale" aria-checked="false">Sale</button>
+      <button type="button" role="radio" data-outcome="nosale" aria-checked="false">No sale</button>
+    </div>
+
+    <div class="fields" id="sale-fields" hidden>
+      <div class="field">
+        <label for="sale-product">Product</label>
+        <div class="input-wrap"><select id="sale-product"></select><span class="suffix">▾</span></div>
+      </div>
+      <div class="field">
+        <label for="sale-value">Value</label>
+        <div class="input-wrap has-prefix"><span class="prefix">£</span><input id="sale-value" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></div>
+      </div>
+    </div>
+
+    <div class="fields" id="nosale-fields" hidden>
+      <div class="field">
+        <label for="lost-reason">Sale lost reason (optional)</label>
+        <div class="input-wrap"><select id="lost-reason"></select><span class="suffix">▾</span></div>
+      </div>
+    </div>
+
+    <button class="done" id="save-call" type="button" disabled>Log call</button>
+  </section>
+</div>
+
+<!-- Monthly targets -->
+<div class="overlay" id="targets-overlay" role="dialog" aria-modal="true" aria-labelledby="targets-modal-title">
+  <section class="modal">
+    <div class="modal-head">
+      <div class="modal-icon neutral" aria-hidden="true">◎</div>
+      <div>
+        <h2 id="targets-modal-title">Targets</h2>
+        <div class="modal-desc">Enter this month's figures. Leave a box blank if there's no target for it.</div>
+      </div>
+      <button class="close" type="button" data-close aria-label="Close">×</button>
+    </div>
+    <div class="fields" id="targets-fields"></div>
+    <div class="button-row">
+      <button class="done secondary" type="button" data-close>Later</button>
+      <button class="done" id="save-targets" type="button">Save targets</button>
+    </div>
+  </section>
+</div>
+
+<!-- Admin -->
+<div class="overlay" id="admin-overlay" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+  <section class="modal">
+    <div class="modal-head">
+      <div class="modal-icon neutral" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></svg></div>
+      <div>
+        <h2 id="admin-title">Admin</h2>
+        <div class="modal-desc">Set up products, target types and sale lost reasons.</div>
+      </div>
+      <button class="close" type="button" data-close aria-label="Close">×</button>
+    </div>
+
+    <div class="admin-section">
+      <h3>Products</h3>
+      <ul class="item-list" id="product-list"></ul>
+      <form class="add-row" id="product-form">
+        <input id="product-name" type="text" placeholder="Product name" aria-label="New product name" autocomplete="off">
+        <button type="submit">Add</button>
+      </form>
+    </div>
+
+    <div class="admin-section">
+      <h3>Target types</h3>
+      <p class="hint">Choose which targets you track. The figures are entered each month.</p>
+      <ul class="item-list" id="target-type-list"></ul>
+      <form class="add-row" id="target-form">
+        <select id="target-choice" aria-label="New target type"></select>
+        <button type="submit" id="target-add">Add</button>
+      </form>
+    </div>
+
+    <div class="admin-section">
+      <h3>Sale lost reasons</h3>
+      <ul class="item-list" id="reason-list"></ul>
+      <form class="add-row" id="reason-form">
+        <input id="reason-name" type="text" placeholder="Reason" aria-label="New sale lost reason" autocomplete="off">
+        <button type="submit">Add</button>
+      </form>
+    </div>
+
+    <button class="done secondary" id="admin-month-targets" type="button">Set this month's targets</button>
+    <button class="done" type="button" data-close style="margin-top:10px">Done</button>
+  </section>
+</div>
+
+<!-- Calculator -->
 <div class="overlay" id="calculator-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
   <section class="modal">
     <div class="modal-head">
@@ -170,7 +328,7 @@
         <h2 id="modal-title">Sales needed for minimum</h2>
         <div class="modal-desc">Enter your target and current sales to see how many more sales you need.</div>
       </div>
-      <button class="close" id="close-x" type="button" aria-label="Close calculator">×</button>
+      <button class="close" type="button" data-close aria-label="Close calculator">×</button>
     </div>
 
     <div class="fields">
@@ -193,14 +351,14 @@
       <div class="result-number" id="sales-needed">–</div>
       <div class="result-note" id="result-note">Enter your full target and actual sales.</div>
     </div>
-    <button class="done" id="done-button" type="button">Done</button>
+    <button class="done" type="button" data-close>Done</button>
   </section>
 </div>
 
 <script>
 (() => {
-  const STORAGE_KEY = "sales-tracker-months-v1";
-  const LEGACY_KEY = "sales-tracker-counts-v1";
+  // Separate from the live page's "sales-tracker-months-v1" so v2 never touches its data.
+  const STORAGE_KEY = "call-tracker-v2";
   const $ = (id) => document.getElementById(id);
 
   // Sales = green, Complaint = amber, Cease = red
@@ -208,64 +366,87 @@
   const LABELS = { green: "Sales", amber: "Complaint", red: "Cease" };
 
   const monthKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-  const validCount = (n) => Number.isSafeInteger(n) && n >= 0 ? n : 0;
-  const toCounts = (value = {}) => Object.fromEntries(TYPES.map(type => [type, validCount(value[type])]));
-  const totalOf = (c) => TYPES.reduce((sum, type) => sum + c[type], 0);
+  const monthName = (key, options) => new Date(+key.slice(0, 4), +key.slice(5) - 1, 1).toLocaleDateString("en-GB", options);
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  const esc = (s) => String(s).replace(/[&<>"']/g, ch => `&#${ch.charCodeAt(0)};`);
+  const money = (n) => {
+    const digits = n % 1 ? 2 : 0;
+    return n.toLocaleString("en-GB", { style: "currency", currency: "GBP", minimumFractionDigits: digits, maximumFractionDigits: digits });
+  };
 
-  // Counts are kept per month: { "2026-10": { green, amber, red }, ... }
-  function loadMonths() {
+  /*
+   * data = {
+   *   settings: { products: [{id, name}], targets: [{id, kind: "quota"|"value", productId?}], reasons: [{id, name}] },
+   *   months: { "2026-10": { calls: [{ts, type, outcome, productId?, product?, value?, reason?}], targets: [{id, kind, productId?, label, value}] | null } }
+   * }
+   * Calls and monthly targets store names/labels too, so history survives products being removed.
+   */
+  function load() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-      if (saved && typeof saved === "object") {
-        const months = {};
-        for (const [key, value] of Object.entries(saved)) {
-          if (/^\d{4}-\d{2}$/.test(key) && value) months[key] = toCounts(value);
-        }
-        return months;
-      }
-      // Carry over counts from the single-total version into the current month.
-      const legacy = toCounts(JSON.parse(localStorage.getItem(LEGACY_KEY) || "{}"));
-      return totalOf(legacy) ? { [monthKey()]: legacy } : {};
-    } catch {
-      return {};
-    }
+      if (saved && saved.settings && saved.months) return saved;
+    } catch {}
+    return { settings: {}, months: {} };
   }
+  const data = load();
+  for (const list of ["products", "targets", "reasons"]) data.settings[list] ||= [];
+  const { settings } = data;
 
-  const months = loadMonths();
-  let currentMonth = monthKey();
-  let counts = toCounts(months[currentMonth]);
-
-  function saveCounts() {
-    if (totalOf(counts)) months[currentMonth] = { ...counts };
-    else delete months[currentMonth];
+  function save() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(months));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch {
-      // The counters still work for this session if browser storage is unavailable.
+      // Everything still works for this session if browser storage is unavailable.
     }
   }
 
-  // Switch to a fresh count when the month rolls over (e.g. app left open overnight).
-  function checkMonth() {
-    const key = monthKey();
-    if (key !== currentMonth) {
-      currentMonth = key;
-      counts = toCounts(months[key]);
-      updateCounts();
-    }
-    updateMonthLabel();
-  }
-  const overlay = $("calculator-overlay");
-  const openButton = $("open-calculator");
-  const closeButton = $("close-x");
-  const doneButton = $("done-button");
-  const targetInput = $("full-target");
-  const percentInput = $("target-percent");
-  const actualInput = $("actual-sales");
-  const resetButton = $("reset-counts");
+  let currentMonth = monthKey();
+  const month = (key = currentMonth) => data.months[key] ||= { calls: [], targets: null };
 
+  const productName = (id) => settings.products.find(p => p.id === id)?.name;
+  const targetLabel = (t) => t.kind === "value" ? "Overall value" : `${productName(t.productId) ?? "Product"} quota`;
+  const formatTarget = (t, n) => t.kind === "value" ? money(n) : n.toLocaleString("en-GB");
+  function actualFor(t, m) {
+    const sales = m.calls.filter(c => c.outcome === "sale");
+    return t.kind === "value"
+      ? Math.round(sales.reduce((sum, c) => sum + (c.value || 0), 0) * 100) / 100
+      : sales.filter(c => c.productId === t.productId).length;
+  }
+  function needsTargets() {
+    const set = month().targets || [];
+    return settings.targets.some(t => !set.some(s => s.id === t.id));
+  }
+
+  // --- Overlays ---
+  const openStack = [];
+  function openOverlay(id, focusEl) {
+    const overlay = $(id);
+    overlay.style.zIndex = 5 + openStack.length; // the most recently opened sits on top
+    overlay.classList.add("open");
+    openStack.push({ id, returnFocus: document.activeElement });
+    (focusEl || overlay.querySelector(".close")).focus();
+  }
+  function closeOverlay(id) {
+    $(id).classList.remove("open");
+    const index = openStack.findIndex(o => o.id === id);
+    if (index === -1) return;
+    const [{ returnFocus }] = openStack.splice(index, 1);
+    if (returnFocus && document.contains(returnFocus)) returnFocus.focus();
+  }
+  document.querySelectorAll(".overlay").forEach(overlay => {
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay || event.target.closest("[data-close]")) closeOverlay(overlay.id);
+    });
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && openStack.length) closeOverlay(openStack[openStack.length - 1].id);
+  });
+
+  // --- Counts & chart ---
   function updateCounts() {
-    const total = totalOf(counts);
+    const calls = month().calls;
+    const counts = Object.fromEntries(TYPES.map(type => [type, calls.filter(c => c.type === type).length]));
+    const total = calls.length;
     const stops = [];
     let start = 0;
 
@@ -287,7 +468,189 @@
     $("donut").style.background = total ? `conic-gradient(${stops.join(", ")})` : "";
     $("donut").setAttribute("aria-label", `Total ${total} calls: ` +
       TYPES.map(type => `${LABELS[type]} ${$(`${type}-percent`).textContent}`).join(", "));
+    renderTargets();
   }
+
+  function renderTargets() {
+    const m = month();
+    const set = (m.targets || []).filter(t => t.value != null);
+    const missing = needsTargets();
+    $("targets-card").hidden = !settings.targets.length && !set.length;
+    $("targets-heading").textContent = `${monthName(currentMonth, { month: "long" })} targets`;
+    $("edit-targets").textContent = missing ? "Set targets" : "Edit";
+    $("edit-targets").hidden = !settings.targets.length;
+
+    const rows = set.map(t => {
+      const actual = actualFor(t, m);
+      const pct = t.value ? Math.min(actual / t.value, 1) * 100 : 100;
+      return `<div class="target-row${actual >= t.value ? " met" : ""}">
+        <div class="target-top"><span>${esc(t.label)}</span><strong>${formatTarget(t, actual)} <small>/ ${formatTarget(t, t.value)}</small></strong></div>
+        <div class="bar"><span style="width:${pct}%"></span></div>
+      </div>`;
+    });
+    if (missing) rows.unshift(`<p class="muted-note">${set.length ? "Some targets aren't set" : "Targets aren't set"} for this month yet.</p>`);
+    $("target-list").innerHTML = rows.join("");
+  }
+
+  // --- Call outcome ---
+  let pendingType = null;
+  let outcome = null;
+
+  function openOutcome(type) {
+    checkMonth();
+    pendingType = type;
+    outcome = null;
+    $("outcome-icon").className = `modal-icon ${type}`;
+    $("outcome-desc").textContent = `${LABELS[type]} call`;
+
+    const product = $("sale-product");
+    product.innerHTML = settings.products.length
+      ? `<option value="">Choose product</option>` + settings.products.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("")
+      : `<option value="">No products yet – add them in Admin</option>`;
+    product.disabled = !settings.products.length;
+    $("sale-value").value = "";
+    $("lost-reason").innerHTML = `<option value="">No reason given</option>` +
+      settings.reasons.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join("");
+
+    renderOutcome();
+    openOverlay("outcome-overlay", document.querySelector("[data-outcome=sale]"));
+  }
+
+  function outcomeValid() {
+    if (outcome === "nosale") return true;
+    if (outcome !== "sale") return false;
+    const value = $("sale-value").value.trim();
+    return value !== "" && Number(value) >= 0 && (!settings.products.length || $("sale-product").value !== "");
+  }
+
+  function renderOutcome() {
+    document.querySelectorAll("[data-outcome]").forEach(b => b.setAttribute("aria-checked", b.dataset.outcome === outcome));
+    $("sale-fields").hidden = outcome !== "sale";
+    $("nosale-fields").hidden = outcome !== "nosale";
+    $("save-call").disabled = !outcomeValid();
+  }
+
+  document.querySelectorAll("[data-outcome]").forEach(button => {
+    button.addEventListener("click", () => { outcome = button.dataset.outcome; renderOutcome(); });
+  });
+  ["sale-product", "sale-value"].forEach(id => $(id).addEventListener("input", renderOutcome));
+  $("sale-product").addEventListener("change", renderOutcome);
+
+  $("save-call").addEventListener("click", () => {
+    if (!outcomeValid()) return;
+    const call = { ts: new Date().toISOString(), type: pendingType, outcome };
+    if (outcome === "sale") {
+      const productId = $("sale-product").value;
+      if (productId) Object.assign(call, { productId, product: productName(productId) });
+      call.value = Math.round(Number($("sale-value").value) * 100) / 100;
+    } else {
+      const reason = settings.reasons.find(r => r.id === $("lost-reason").value);
+      if (reason) call.reason = reason.name;
+    }
+    month().calls.push(call);
+    save();
+    updateCounts();
+    closeOverlay("outcome-overlay");
+  });
+
+  for (const type of TYPES) $(`${type}-button`).addEventListener("click", () => openOutcome(type));
+
+  $("reset-counts").addEventListener("click", () => {
+    month().calls = [];
+    save();
+    updateCounts();
+  });
+
+  // --- Monthly targets ---
+  function openTargets() {
+    const set = month().targets || [];
+    $("targets-modal-title").textContent = `Targets for ${monthName(currentMonth, { month: "long", year: "numeric" })}`;
+    $("targets-fields").innerHTML = settings.targets.map(t => {
+      const value = set.find(s => s.id === t.id)?.value ?? "";
+      const isValue = t.kind === "value";
+      return `<div class="field">
+        <label for="target-${t.id}">${esc(targetLabel(t))}</label>
+        <div class="input-wrap${isValue ? " has-prefix" : ""}">${isValue ? `<span class="prefix">£</span>` : ""}<input id="target-${t.id}" type="number" min="0" step="${isValue ? "0.01" : "1"}" inputmode="decimal" value="${value}">${isValue ? "" : `<span class="suffix">sales</span>`}</div>
+      </div>`;
+    }).join("");
+    openOverlay("targets-overlay");
+  }
+
+  $("save-targets").addEventListener("click", () => {
+    month().targets = settings.targets.map(t => {
+      const raw = $(`target-${t.id}`).value.trim();
+      const value = raw === "" || !(Number(raw) >= 0) ? null : Number(raw);
+      return { id: t.id, kind: t.kind, productId: t.productId, label: targetLabel(t), value };
+    });
+    save();
+    updateCounts();
+    closeOverlay("targets-overlay");
+  });
+  $("edit-targets").addEventListener("click", openTargets);
+
+  // --- Admin ---
+  const listItems = (items, kind, describe) => items.length
+    ? items.map(item => `<li><span>${describe(item)}</span><button class="remove" type="button" data-remove="${kind}" data-id="${item.id}" aria-label="Remove">×</button></li>`).join("")
+    : `<li class="empty">None yet.</li>`;
+
+  function renderAdmin() {
+    $("product-list").innerHTML = listItems(settings.products, "products", p => esc(p.name));
+    $("reason-list").innerHTML = listItems(settings.reasons, "reasons", r => esc(r.name));
+    $("target-type-list").innerHTML = listItems(settings.targets, "targets",
+      t => `${esc(targetLabel(t))} <small>${t.kind === "value" ? "£ value" : "number of sales"}</small>`);
+
+    const choices = [];
+    if (!settings.targets.some(t => t.kind === "value")) choices.push(`<option value="value">Overall value (£)</option>`);
+    for (const p of settings.products) {
+      if (!settings.targets.some(t => t.kind === "quota" && t.productId === p.id)) choices.push(`<option value="quota:${p.id}">${esc(p.name)} quota (sales)</option>`);
+    }
+    $("target-choice").innerHTML = choices.join("") || `<option value="">${settings.products.length ? "All target types added" : "Add products for quota targets"}</option>`;
+    $("target-choice").disabled = $("target-add").disabled = !choices.length;
+    $("admin-month-targets").hidden = !settings.targets.length;
+    $("admin-month-targets").textContent = `Set ${monthName(currentMonth, { month: "long" })} targets`;
+  }
+
+  function settingsChanged() {
+    save();
+    renderAdmin();
+    updateCounts();
+  }
+
+  function addNamed(list, input) {
+    const name = input.value.trim();
+    if (!name) return;
+    if (!list.some(item => item.name.toLowerCase() === name.toLowerCase())) list.push({ id: uid(), name });
+    input.value = "";
+    settingsChanged();
+  }
+  $("product-form").addEventListener("submit", (event) => { event.preventDefault(); addNamed(settings.products, $("product-name")); });
+  $("reason-form").addEventListener("submit", (event) => { event.preventDefault(); addNamed(settings.reasons, $("reason-name")); });
+  $("target-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const choice = $("target-choice").value;
+    if (!choice) return;
+    const [kind, productId] = choice.split(":");
+    settings.targets.push(kind === "quota" ? { id: uid(), kind, productId } : { id: uid(), kind });
+    settingsChanged();
+  });
+
+  $("admin-overlay").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-remove]");
+    if (!button) return;
+    const { remove: kind, id } = button.dataset;
+    settings[kind] = settings[kind].filter(item => item.id !== id);
+    // Removing a product also removes its quota target type.
+    if (kind === "products") settings.targets = settings.targets.filter(t => t.productId !== id);
+    settingsChanged();
+  });
+
+  $("open-admin").addEventListener("click", () => { renderAdmin(); openOverlay("admin-overlay"); });
+  $("admin-month-targets").addEventListener("click", () => { closeOverlay("admin-overlay"); openTargets(); });
+
+  // --- Calculator ---
+  const targetInput = $("full-target");
+  const percentInput = $("target-percent");
+  const actualInput = $("actual-sales");
 
   function numberFrom(input) {
     const n = Number(input.value);
@@ -312,65 +675,95 @@
       : `You need ${needed.toLocaleString()} more ${needed === 1 ? "sale" : "sales"} to reach your minimum target (${percent}%).`;
   }
 
-  function openModal() {
-    overlay.classList.add("open");
-    updateCalculator();
-    closeButton.focus();
-  }
-  function closeModal() {
-    overlay.classList.remove("open");
-    openButton.focus();
-  }
-
-  for (const type of TYPES) {
-    $(`${type}-button`).addEventListener("click", () => { checkMonth(); counts[type] += 1; saveCounts(); updateCounts(); });
-  }
-  resetButton.addEventListener("click", () => {
-    counts = toCounts();
-    saveCounts();
-    updateCounts();
-  });
-  openButton.addEventListener("click", openModal);
-  closeButton.addEventListener("click", closeModal);
-  doneButton.addEventListener("click", closeModal);
   [targetInput, percentInput, actualInput].forEach(input => input.addEventListener("input", updateCalculator));
-  overlay.addEventListener("click", (event) => { if (event.target === overlay) closeModal(); });
-  document.addEventListener("keydown", (event) => { if (event.key === "Escape" && overlay.classList.contains("open")) closeModal(); });
+  $("open-calculator").addEventListener("click", () => { updateCalculator(); openOverlay("calculator-overlay"); });
 
+  // --- Month rollover ---
   function updateMonthLabel() {
-    const now = new Date();
-    $("today-label").textContent = now.toLocaleDateString(undefined, { month: "short", year: "numeric" });
+    $("today-label").textContent = new Date().toLocaleDateString("en-GB", { month: "short", year: "numeric" });
   }
 
-  function buildCsv() {
-    const keys = Object.keys(months);
-    if (!keys.includes(currentMonth)) keys.push(currentMonth);
-    const rows = keys.sort().map(key => {
-      const c = toCounts(months[key]);
-      const total = totalOf(c);
-      return [key, ...TYPES.map(type => c[type]), total, total ? Math.round(c.green / total * 100) + "%" : ""].join(",");
-    });
-    return ["Month,Sales calls,Complaint calls,Cease calls,Total,Sales %", ...rows].join("\n");
-  }
-
-  async function exportData() {
-    checkMonth();
-    const file = new File([buildCsv()], `call-tracker-${currentMonth}.csv`, { type: "text/csv" });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({ files: [file], title: "Call tracker data" });
-        return;
-      } catch (error) {
-        if (error.name === "AbortError") return;
-        // Fall back to a download if sharing fails for any other reason.
-      }
+  // Switch to a fresh month when it rolls over (e.g. app left open overnight) and ask for its targets.
+  function checkMonth() {
+    const key = monthKey();
+    if (key !== currentMonth) {
+      currentMonth = key;
+      updateCounts();
+      if (needsTargets() && !$("targets-overlay").classList.contains("open")) openTargets();
     }
+    updateMonthLabel();
+  }
+
+  // --- Export ---
+  function toCsv(rows) {
+    return rows.map(row => row.map(cell => {
+      const text = cell == null ? "" : String(cell);
+      return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    }).join(",")).join("\n");
+  }
+
+  function buildSummaryCsv() {
+    const keys = Object.keys(data.months).filter(k => data.months[k].calls.length || data.months[k].targets);
+    if (!keys.includes(currentMonth)) keys.push(currentMonth);
+    keys.sort();
+
+    // One target/actual column pair per target type seen in any month (latest label wins).
+    const targetColumns = new Map();
+    for (const key of keys) for (const t of month(key).targets || []) targetColumns.set(t.id, t.label);
+
+    const header = ["Month", "Sales calls", "Complaint calls", "Cease calls", "Total calls", "Sales made", "Sales value (£)",
+      ...[...targetColumns.values()].flatMap(label => [`${label} target`, `${label} actual`])];
+    const rows = keys.map(key => {
+      const m = month(key);
+      const sales = m.calls.filter(c => c.outcome === "sale");
+      return [
+        key, ...TYPES.map(type => m.calls.filter(c => c.type === type).length), m.calls.length,
+        sales.length, sales.reduce((sum, c) => sum + (c.value || 0), 0).toFixed(2),
+        ...[...targetColumns.keys()].flatMap(id => {
+          const t = (m.targets || []).find(x => x.id === id);
+          return t ? [t.value ?? "", actualFor(t, m)] : ["", ""];
+        })
+      ];
+    });
+    return toCsv([header, ...rows]);
+  }
+
+  function buildCallsCsv() {
+    const calls = Object.values(data.months).flatMap(m => m.calls).sort((a, b) => a.ts.localeCompare(b.ts));
+    const rows = calls.map(c => {
+      const d = new Date(c.ts);
+      return [d.toLocaleDateString("en-GB"), d.toLocaleTimeString("en-GB"), LABELS[c.type],
+        c.outcome === "sale" ? "Sale" : "No sale", c.product ?? "", c.value ?? "", c.reason ?? ""];
+    });
+    return toCsv([["Date", "Time", "Call type", "Outcome", "Product", "Value (£)", "Sale lost reason"], ...rows]);
+  }
+
+  function download(file) {
     const url = URL.createObjectURL(file);
     const link = document.createElement("a");
     link.href = url;
     link.download = file.name;
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  async function exportData() {
+    checkMonth();
+    const stamp = new Date().toISOString().slice(0, 10);
+    const files = [
+      new File([buildSummaryCsv()], `call-tracker-summary-${stamp}.csv`, { type: "text/csv" }),
+      new File([buildCallsCsv()], `call-tracker-calls-${stamp}.csv`, { type: "text/csv" })
+    ];
+    if (navigator.canShare && navigator.canShare({ files })) {
+      try {
+        await navigator.share({ files, title: "Call tracker data" });
+        return;
+      } catch (error) {
+        if (error.name === "AbortError") return;
+        // Fall back to downloads if sharing fails for any other reason.
+      }
+    }
+    files.forEach((file, i) => setTimeout(() => download(file), i * 400));
   }
 
   $("export-data").addEventListener("click", exportData);
@@ -380,6 +773,7 @@
   updateMonthLabel();
   updateCounts();
   updateCalculator();
+  if (needsTargets()) openTargets();
 })();
 </script>
 </body>
