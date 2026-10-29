@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f7fb">
+<title>Mary's Call Tracker</title>
+<style>
+  :root {
+    --ink: #17263d;
+    --muted: #667995;
+    --line: #dce4ef;
+    --panel: #ffffff;
+    --surface: #f1f4f9;
+    --green: #159b69;
+    --green-dark: #08734c;
+    --green-pale: #e2f6ee;
+    --red: #f04e55;
+    --red-dark: #a91e2b;
+    --red-pale: #ffeaec;
+    --shadow: 0 12px 34px rgba(25, 43, 69, .08);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; padding: 22px 16px;
+    background: linear-gradient(145deg, #f8fafc, #edf2f8);
+    color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  button, input { font: inherit; }
+  button { cursor: pointer; }
+  .app { max-width: 440px; margin: 0 auto; }
+  .topbar { display:flex; align-items:center; justify-content:space-between; margin: 12px 2px 22px; }
+  h1 { font-size: 28px; letter-spacing: -.7px; margin: 0; font-weight: 760; }
+  .subtle { color: var(--muted); font-size: 14px; margin-top: 5px; }
+  .icon-button { border: 1px solid var(--line); background: white; color: var(--ink); border-radius: 13px; width: 44px; height: 44px; font-size: 20px; box-shadow: 0 3px 12px #1c35500a; display:grid; place-items:center; padding:0; }
+  .icon-button:active { transform: scale(.94); }
+  .top-actions { display:flex; gap:8px; }
+  .counter-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .counter {
+    border: 0; min-height: 190px; border-radius: 23px; padding: 20px 12px 18px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    transition: transform .08s ease, filter .15s ease;
+  }
+  .counter:active { transform: scale(.98); }
+  .counter.green { background: var(--green-pale); color: var(--green-dark); }
+  .counter.red { background: var(--red-pale); color: var(--red-dark); }
+  .plus { display:grid; place-items:center; width:58px; height:58px; border-radius:50%; color:white; font-size:38px; line-height:1; font-weight:300; margin-bottom:12px; box-shadow: 0 5px 12px #10243a12; }
+  .green .plus { background: var(--green); }
+  .red .plus { background: var(--red); }
+  .counter-label { font-size:17px; font-weight:700; }
+  .counter-number { font-size:46px; line-height:1.1; font-weight:780; margin-top:9px; font-variant-numeric: tabular-nums; }
+  .split-card { background: white; border-radius: 22px; margin-top: 14px; padding: 18px 16px; box-shadow: var(--shadow); }
+  .split-layout { display:grid; grid-template-columns: 1fr 122px 1fr; gap: 5px; align-items:center; text-align:center; }
+  .percent { font-size:29px; font-weight:800; letter-spacing:-.7px; font-variant-numeric: tabular-nums; }
+  .percent.green-text { color: var(--green); }
+  .percent.red-text { color: var(--red); }
+  .percent-label { color: var(--muted); font-size:14px; margin-top:3px; }
+  .donut { width:122px; aspect-ratio:1; border-radius:50%; display:grid; place-items:center; position:relative; background:conic-gradient(var(--green) 0 var(--green-angle, 60%), var(--red) var(--green-angle, 60%) 100%); }
+  .donut::before { content:""; position:absolute; width:76px; aspect-ratio:1; background:white; border-radius:50%; }
+  .donut-center { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; }
+  .donut-center span { font-size:13px; color:var(--muted); }
+  .donut-center strong { font-size:25px; line-height:1.15; }
+  .calc-link { display:flex; align-items:center; gap:13px; width:100%; text-align:left; border:1px solid var(--line); background:white; border-radius:18px; padding:17px 16px; margin-top:14px; color:var(--ink); box-shadow: 0 5px 16px #1c355008; }
+  .calc-icon { width:42px; height:42px; border-radius:13px; background:var(--surface); display:grid; place-items:center; font-size:22px; }
+  .calc-copy { flex:1; font-weight:700; }
+  .calc-copy small { display:block; font-weight:400; color:var(--muted); font-size:12px; margin-top:4px; }
+  .chevron { color:var(--muted); font-size:26px; }
+  .overlay { display:none; position:fixed; inset:0; z-index:5; background:rgba(16, 28, 45, .48); align-items:center; justify-content:center; padding:14px; }
+  .overlay.open { display:flex; }
+  .modal { width:min(100%, 440px); max-height:calc(100dvh - 28px); overflow:auto; background:white; border-radius:28px; padding:20px 20px max(20px, env(safe-area-inset-bottom)); box-shadow:0 20px 70px #0d1c2e40; animation: rise .18s ease-out; }
+  @keyframes rise { from { transform:translateY(16px); opacity:.7; } to { transform:translateY(0); opacity:1; } }
+  .modal-head { display:flex; align-items:flex-start; gap:12px; margin-bottom:22px; }
+  .modal-icon { width:48px; height:48px; display:grid; place-items:center; border-radius:16px; background:var(--green-pale); color:var(--green); font-size:22px; flex-shrink:0; }
+  h2 { font-size:21px; margin:2px 0 0; letter-spacing:-.35px; }
+  .modal-desc { color:var(--muted); font-size:14px; line-height:1.45; margin-top:5px; }
+  .close { margin-left:auto; border:0; background:transparent; color:var(--muted); font-size:27px; line-height:1; padding:0 2px; }
+  .fields { display:grid; gap:15px; }
+  .field label { display:block; color:var(--muted); font-size:13px; margin-bottom:7px; }
+  .input-wrap { position:relative; }
+  .field input { width:100%; min-height:50px; border:1px solid var(--line); border-radius:13px; padding:12px 44px 12px 14px; color:var(--ink); background:#fbfcfe; outline:none; }
+  .field input:focus { border-color:#7fae9b; box-shadow:0 0 0 3px #159b6917; }
+  .suffix { position:absolute; right:15px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; }
+  .result { margin-top:19px; background:linear-gradient(120deg, #e8f8f2, #f0faf7); border-radius:17px; padding:17px 18px; }
+  .result-label { color:var(--green-dark); font-size:14px; font-weight:700; }
+  .result-number { color:var(--green); font-size:42px; line-height:1.1; font-weight:800; margin:5px 0 3px; font-variant-numeric:tabular-nums; }
+  .result-note { color:#648b80; font-size:13px; line-height:1.4; }
+  .done { width:100%; border:0; border-radius:16px; min-height:54px; background:var(--ink); color:white; font-weight:700; margin-top:18px; }
+  @media (max-width:360px) {
+    body { padding:15px 12px; }
+    h1 { font-size:25px; }
+    .counter { min-height:170px; }
+    .split-layout { grid-template-columns:1fr 100px 1fr; }
+    .donut { width:100px; }
+    .donut::before { width:63px; }
+    .percent { font-size:25px; }
+    .modal { padding-left:16px; padding-right:16px; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="topbar">
+    <div>
+      <h1>Mary's Call Tracker</h1>
+      <div class="subtle" id="today-label">Daily call count</div>
+    </div>
+    <div class="top-actions">
+    <button class="icon-button" id="export-data" type="button" aria-label="Export or share all data" title="Export / share"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button>
+    <button class="icon-button" id="reset-counts" type="button" aria-label="Reset counts" title="Reset counts"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 5.66"/><path d="M20 4v7h-7"/></svg></button>
+    </div>
+  </header>
+
+  <section class="counter-grid" aria-label="Log calls">
+    <button class="counter green" id="green-button" type="button" aria-label="Log one Green Sales Call">
+      <span class="plus" aria-hidden="true">+</span>
+      <span class="counter-label">Sales Call</span>
+      <span class="counter-number" id="green-count">0</span>
+    </button>
+    <button class="counter red" id="red-button" type="button" aria-label="Log one Red Cease Call">
+      <span class="plus" aria-hidden="true">+</span>
+      <span class="counter-label">Cease Call</span>
+      <span class="counter-number" id="red-count">0</span>
+    </button>
+  </section>
+
+  <section class="split-card" aria-label="Call split comparison">
+    <div class="split-layout">
+      <div>
+        <div class="percent green-text" id="green-percent">0%</div>
+        <div class="percent-label">Green</div>
+      </div>
+      <div class="donut" id="donut" role="img" aria-label="Call split chart">
+        <div class="donut-center"><span>Total</span><strong id="total-count">0</strong></div>
+      </div>
+      <div>
+        <div class="percent red-text" id="red-percent">0%</div>
+        <div class="percent-label">Red</div>
+      </div>
+    </div>
+  </section>
+
+  <button class="calc-link" id="open-calculator" type="button">
+    <span class="calc-icon" aria-hidden="true">▦</span>
+    <span class="calc-copy">Calculate sales needed<small>Based on your target and sales MTD</small></span>
+    <span class="chevron" aria-hidden="true">›</span>
+  </button>
+</main>
+
+<div class="overlay" id="calculator-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <section class="modal">
+    <div class="modal-head">
+      <div class="modal-icon" aria-hidden="true">▦</div>
+      <div>
+        <h2 id="modal-title">Sales needed for minimum</h2>
+        <div class="modal-desc">Enter your target and current sales to see how many more sales you need.</div>
+      </div>
+      <button class="close" id="close-x" type="button" aria-label="Close calculator">×</button>
+    </div>
+
+    <div class="fields">
+      <div class="field">
+        <label for="full-target">Full target</label>
+        <div class="input-wrap"><input id="full-target" type="number" min="0" step="1" inputmode="decimal"></div>
+      </div>
+      <div class="field">
+        <label for="target-percent">% of target to meet minimum</label>
+        <div class="input-wrap"><input id="target-percent" type="number" min="0" max="100" step="1" inputmode="decimal" value="85"><span class="suffix">%</span></div>
+      </div>
+      <div class="field">
+        <label for="actual-sales">Actual sales MTD</label>
+        <div class="input-wrap"><input id="actual-sales" type="number" min="0" step="1" inputmode="decimal"></div>
+      </div>
+    </div>
+
+    <div class="result" aria-live="polite">
+      <div class="result-label">Sales needed</div>
+      <div class="result-number" id="sales-needed">–</div>
+      <div class="result-note" id="result-note">Enter your full target and actual sales.</div>
+    </div>
+    <button class="done" id="done-button" type="button">Done</button>
+  </section>
+</div>
+
+<script>
+(() => {
+  const STORAGE_KEY = "sales-tracker-months-v1";
+  const LEGACY_KEY = "sales-tracker-counts-v1";
+  const $ = (id) => document.getElementById(id);
+
+  const monthKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  const validCount = (n) => Number.isSafeInteger(n) && n >= 0 ? n : 0;
+
+  // Counts are kept per month: { "2026-10": { green, red }, ... }
+  function loadMonths() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+      if (saved && typeof saved === "object") {
+        const months = {};
+        for (const [key, value] of Object.entries(saved)) {
+          if (/^\d{4}-\d{2}$/.test(key) && value) months[key] = { green: validCount(value.green), red: validCount(value.red) };
+        }
+        return months;
+      }
+      // Carry over counts from the single-total version into the current month.
+      const legacy = JSON.parse(localStorage.getItem(LEGACY_KEY) || "{}");
+      const green = validCount(legacy.green);
+      const red = validCount(legacy.red);
+      return green || red ? { [monthKey()]: { green, red } } : {};
+    } catch {
+      return {};
+    }
+  }
+
+  const months = loadMonths();
+  let currentMonth = monthKey();
+  let { green, red } = months[currentMonth] || { green: 0, red: 0 };
+
+  function saveCounts() {
+    if (green || red) months[currentMonth] = { green, red };
+    else delete months[currentMonth];
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(months));
+    } catch {
+      // The counters still work for this session if browser storage is unavailable.
+    }
+  }
+
+  // Switch to a fresh count when the month rolls over (e.g. app left open overnight).
+  function checkMonth() {
+    const key = monthKey();
+    if (key !== currentMonth) {
+      currentMonth = key;
+      ({ green, red } = months[key] || { green: 0, red: 0 });
+      updateCounts();
+    }
+    updateMonthLabel();
+  }
+  const greenButton = $("green-button");
+  const redButton = $("red-button");
+  const overlay = $("calculator-overlay");
+  const openButton = $("open-calculator");
+  const closeButton = $("close-x");
+  const doneButton = $("done-button");
+  const targetInput = $("full-target");
+  const percentInput = $("target-percent");
+  const actualInput = $("actual-sales");
+  const resetButton = $("reset-counts");
+
+  function updateCounts() {
+    const total = green + red;
+    const greenShare = total ? Math.round(green / total * 100) : 0;
+    const redShare = total ? 100 - greenShare : 0;
+
+    $("green-count").textContent = green;
+    $("red-count").textContent = red;
+    $("total-count").textContent = total;
+    $("green-percent").textContent = greenShare + "%";
+    $("red-percent").textContent = redShare + "%";
+    $("donut").style.setProperty("--green-angle", greenShare + "%");
+    $("donut").setAttribute("aria-label", `Total ${total} calls: ${greenShare}% Green and ${redShare}% Red`);
+  }
+
+  function numberFrom(input) {
+    const n = Number(input.value);
+    return Number.isFinite(n) && n >= 0 ? n : 0;
+  }
+
+  function updateCalculator() {
+    if ([targetInput, percentInput, actualInput].some(input => input.value.trim() === "")) {
+      $("sales-needed").textContent = "–";
+      $("result-note").textContent = "Enter your full target and actual sales.";
+      return;
+    }
+    const target = numberFrom(targetInput);
+    const percent = Math.min(100, numberFrom(percentInput));
+    const actual = numberFrom(actualInput);
+    const minimum = Math.ceil(target * percent / 100);
+    const needed = Math.max(0, minimum - actual);
+
+    $("sales-needed").textContent = needed.toLocaleString();
+    $("result-note").textContent = needed === 0
+      ? `You've reached the minimum target (${percent}%).`
+      : `You need ${needed.toLocaleString()} more ${needed === 1 ? "sale" : "sales"} to reach your minimum target (${percent}%).`;
+  }
+
+  function openModal() {
+    overlay.classList.add("open");
+    updateCalculator();
+    closeButton.focus();
+  }
+  function closeModal() {
+    overlay.classList.remove("open");
+    openButton.focus();
+  }
+
+  greenButton.addEventListener("click", () => { checkMonth(); green += 1; saveCounts(); updateCounts(); });
+  redButton.addEventListener("click", () => { checkMonth(); red += 1; saveCounts(); updateCounts(); });
+  resetButton.addEventListener("click", () => {
+    green = 0;
+    red = 0;
+    saveCounts();
+    updateCounts();
+  });
+  openButton.addEventListener("click", openModal);
+  closeButton.addEventListener("click", closeModal);
+  doneButton.addEventListener("click", closeModal);
+  [targetInput, percentInput, actualInput].forEach(input => input.addEventListener("input", updateCalculator));
+  overlay.addEventListener("click", (event) => { if (event.target === overlay) closeModal(); });
+  document.addEventListener("keydown", (event) => { if (event.key === "Escape" && overlay.classList.contains("open")) closeModal(); });
+
+  function updateMonthLabel() {
+    const now = new Date();
+    $("today-label").textContent = now.toLocaleDateString(undefined, { month: "short", year: "numeric" });
+  }
+
+  function buildCsv() {
+    const keys = Object.keys(months);
+    if (!keys.includes(currentMonth)) keys.push(currentMonth);
+    const rows = keys.sort().map(key => {
+      const { green: g, red: r } = months[key] || { green: 0, red: 0 };
+      const total = g + r;
+      return [key, g, r, total, total ? Math.round(g / total * 100) + "%" : ""].join(",");
+    });
+    return ["Month,Sales calls,Cease calls,Total,Sales %", ...rows].join("\n");
+  }
+
+  async function exportData() {
+    checkMonth();
+    const file = new File([buildCsv()], `call-tracker-${currentMonth}.csv`, { type: "text/csv" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: "Call tracker data" });
+        return;
+      } catch (error) {
+        if (error.name === "AbortError") return;
+        // Fall back to a download if sharing fails for any other reason.
+      }
+    }
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = file.name;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  $("export-data").addEventListener("click", exportData);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) checkMonth(); });
+  setInterval(checkMonth, 60 * 1000);
+
+  updateMonthLabel();
+  updateCounts();
+  updateCalculator();
+})();
+</script>
+</body>
+</html>
