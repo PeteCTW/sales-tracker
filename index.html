@@ -76,6 +76,13 @@
   .calc-copy { flex:1; font-weight:700; }
   .calc-copy small { display:block; font-weight:400; color:var(--muted); font-size:12px; margin-top:4px; }
   .chevron { color:var(--muted); font-size:26px; }
+  .try-v2 { position:relative; overflow:hidden; display:flex; align-items:center; gap:13px; margin-top:14px; padding:17px 16px; border-radius:18px; color:white; text-decoration:none; background:linear-gradient(120deg, #17263d 0%, #2a4a7a 60%, #3567d6 100%); box-shadow:0 10px 26px #17263d33; }
+  .try-v2::after { content:""; position:absolute; right:-40px; top:-60px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle, #ffffff22, transparent 70%); pointer-events:none; }
+  .try-v2:active { transform:scale(.98); }
+  .try-v2-icon { width:42px; height:42px; border-radius:13px; display:grid; place-items:center; background:#ffffff1f; color:#ffd77a; flex-shrink:0; }
+  .try-v2-copy { flex:1; font-weight:700; }
+  .try-v2-copy small { display:block; font-weight:400; font-size:12px; margin-top:4px; color:#ffffffb3; }
+  .try-v2-arrow { width:32px; height:32px; border-radius:50%; display:grid; place-items:center; background:white; color:#17263d; font-weight:700; flex-shrink:0; }
   .overlay { display:none; position:fixed; inset:0; z-index:5; background:rgba(16, 28, 45, .48); align-items:center; justify-content:center; padding:14px; }
   .overlay.open { display:flex; }
   .modal { width:min(100%, 440px); max-height:calc(100dvh - 28px); overflow:auto; background:white; border-radius:28px; padding:20px 20px max(20px, env(safe-area-inset-bottom)); box-shadow:0 20px 70px #0d1c2e40; animation: rise .18s ease-out; }
@@ -160,6 +167,12 @@
     <span class="calc-copy">Calculate sales needed<small>Based on your target and sales MTD</small></span>
     <span class="chevron" aria-hidden="true">›</span>
   </button>
+
+  <a class="try-v2" href="v2.html">
+    <span class="try-v2-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9z"/><path d="M19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9z" opacity=".7"/></svg></span>
+    <span class="try-v2-copy">Try v2<small>Products, targets &amp; call outcomes</small></span>
+    <span class="try-v2-arrow" aria-hidden="true">→</span>
+  </a>
 </main>
 
 <div class="overlay" id="calculator-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
