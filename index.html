@@ -15,6 +15,9 @@
     --green: #159b69;
     --green-dark: #08734c;
     --green-pale: #e2f6ee;
+    --amber: #e8970c;
+    --amber-dark: #96590a;
+    --amber-pale: #fff2da;
     --red: #f04e55;
     --red-dark: #a91e2b;
     --red-pale: #ffeaec;
@@ -35,27 +38,33 @@
   .icon-button { border: 1px solid var(--line); background: white; color: var(--ink); border-radius: 13px; width: 44px; height: 44px; font-size: 20px; box-shadow: 0 3px 12px #1c35500a; display:grid; place-items:center; padding:0; }
   .icon-button:active { transform: scale(.94); }
   .top-actions { display:flex; gap:8px; }
-  .counter-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .counter-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .counter {
-    border: 0; min-height: 190px; border-radius: 23px; padding: 20px 12px 18px;
+    border: 0; min-height: 180px; border-radius: 23px; padding: 18px 6px 16px;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     transition: transform .08s ease, filter .15s ease;
   }
   .counter:active { transform: scale(.98); }
   .counter.green { background: var(--green-pale); color: var(--green-dark); }
+  .counter.amber { background: var(--amber-pale); color: var(--amber-dark); }
   .counter.red { background: var(--red-pale); color: var(--red-dark); }
-  .plus { display:grid; place-items:center; width:58px; height:58px; border-radius:50%; color:white; font-size:38px; line-height:1; font-weight:300; margin-bottom:12px; box-shadow: 0 5px 12px #10243a12; }
+  .plus { display:grid; place-items:center; width:50px; height:50px; border-radius:50%; color:white; font-size:34px; line-height:1; font-weight:300; margin-bottom:12px; box-shadow: 0 5px 12px #10243a12; }
   .green .plus { background: var(--green); }
+  .amber .plus { background: var(--amber); }
   .red .plus { background: var(--red); }
-  .counter-label { font-size:17px; font-weight:700; }
-  .counter-number { font-size:46px; line-height:1.1; font-weight:780; margin-top:9px; font-variant-numeric: tabular-nums; }
-  .split-card { background: white; border-radius: 22px; margin-top: 14px; padding: 18px 16px; box-shadow: var(--shadow); }
-  .split-layout { display:grid; grid-template-columns: 1fr 122px 1fr; gap: 5px; align-items:center; text-align:center; }
-  .percent { font-size:29px; font-weight:800; letter-spacing:-.7px; font-variant-numeric: tabular-nums; }
-  .percent.green-text { color: var(--green); }
-  .percent.red-text { color: var(--red); }
-  .percent-label { color: var(--muted); font-size:14px; margin-top:3px; }
-  .donut { width:122px; aspect-ratio:1; border-radius:50%; display:grid; place-items:center; position:relative; background:conic-gradient(var(--green) 0 var(--green-angle, 60%), var(--red) var(--green-angle, 60%) 100%); }
+  .counter-label { font-size:15px; font-weight:700; }
+  .counter-number { font-size:40px; line-height:1.1; font-weight:780; margin-top:8px; font-variant-numeric: tabular-nums; }
+  .split-card { background: white; border-radius: 22px; margin-top: 14px; padding: 18px 18px; box-shadow: var(--shadow); }
+  .split-layout { display:grid; grid-template-columns: 122px 1fr; gap: 22px; align-items:center; }
+  .legend { display:grid; gap:10px; }
+  .legend-row { display:flex; align-items:center; gap:10px; }
+  .legend-row .dot { width:12px; height:12px; border-radius:4px; flex-shrink:0; }
+  .legend-row .name { flex:1; color: var(--muted); font-size:15px; }
+  .percent { font-size:22px; font-weight:800; letter-spacing:-.4px; font-variant-numeric: tabular-nums; }
+  .green .dot { background: var(--green); }
+  .amber .dot { background: var(--amber); }
+  .red .dot { background: var(--red); }
+  .donut { width:122px; aspect-ratio:1; border-radius:50%; display:grid; place-items:center; position:relative; background: var(--line); }
   .donut::before { content:""; position:absolute; width:76px; aspect-ratio:1; background:white; border-radius:50%; }
   .donut-center { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; }
   .donut-center span { font-size:13px; color:var(--muted); }
@@ -88,11 +97,13 @@
   @media (max-width:360px) {
     body { padding:15px 12px; }
     h1 { font-size:25px; }
-    .counter { min-height:170px; }
-    .split-layout { grid-template-columns:1fr 100px 1fr; }
+    .counter { min-height:160px; }
+    .counter-label { font-size:14px; }
+    .counter-number { font-size:34px; }
+    .split-layout { grid-template-columns:100px 1fr; gap:16px; }
     .donut { width:100px; }
     .donut::before { width:63px; }
-    .percent { font-size:25px; }
+    .percent { font-size:20px; }
     .modal { padding-left:16px; padding-right:16px; }
   }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation:none !important; transition:none !important; } }
@@ -112,30 +123,32 @@
   </header>
 
   <section class="counter-grid" aria-label="Log calls">
-    <button class="counter green" id="green-button" type="button" aria-label="Log one Green Sales Call">
+    <button class="counter green" id="green-button" type="button" aria-label="Log one Sales Call">
       <span class="plus" aria-hidden="true">+</span>
-      <span class="counter-label">Sales Call</span>
+      <span class="counter-label">Sales</span>
       <span class="counter-number" id="green-count">0</span>
     </button>
-    <button class="counter red" id="red-button" type="button" aria-label="Log one Red Cease Call">
+    <button class="counter amber" id="amber-button" type="button" aria-label="Log one Complaint Call">
       <span class="plus" aria-hidden="true">+</span>
-      <span class="counter-label">Cease Call</span>
+      <span class="counter-label">Complaint</span>
+      <span class="counter-number" id="amber-count">0</span>
+    </button>
+    <button class="counter red" id="red-button" type="button" aria-label="Log one Cease Call">
+      <span class="plus" aria-hidden="true">+</span>
+      <span class="counter-label">Cease</span>
       <span class="counter-number" id="red-count">0</span>
     </button>
   </section>
 
   <section class="split-card" aria-label="Call split comparison">
     <div class="split-layout">
-      <div>
-        <div class="percent green-text" id="green-percent">0%</div>
-        <div class="percent-label">Green</div>
-      </div>
       <div class="donut" id="donut" role="img" aria-label="Call split chart">
         <div class="donut-center"><span>Total</span><strong id="total-count">0</strong></div>
       </div>
-      <div>
-        <div class="percent red-text" id="red-percent">0%</div>
-        <div class="percent-label">Red</div>
+      <div class="legend">
+        <div class="legend-row green"><span class="dot"></span><span class="name">Sales</span><span class="percent" id="green-percent">0%</span></div>
+        <div class="legend-row amber"><span class="dot"></span><span class="name">Complaint</span><span class="percent" id="amber-percent">0%</span></div>
+        <div class="legend-row red"><span class="dot"></span><span class="name">Cease</span><span class="percent" id="red-percent">0%</span></div>
       </div>
     </div>
   </section>
@@ -188,25 +201,29 @@
   const LEGACY_KEY = "sales-tracker-counts-v1";
   const $ = (id) => document.getElementById(id);
 
+  // Sales = green, Complaint = amber, Cease = red
+  const TYPES = ["green", "amber", "red"];
+  const LABELS = { green: "Sales", amber: "Complaint", red: "Cease" };
+
   const monthKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
   const validCount = (n) => Number.isSafeInteger(n) && n >= 0 ? n : 0;
+  const toCounts = (value = {}) => Object.fromEntries(TYPES.map(type => [type, validCount(value[type])]));
+  const totalOf = (c) => TYPES.reduce((sum, type) => sum + c[type], 0);
 
-  // Counts are kept per month: { "2026-10": { green, red }, ... }
+  // Counts are kept per month: { "2026-10": { green, amber, red }, ... }
   function loadMonths() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       if (saved && typeof saved === "object") {
         const months = {};
         for (const [key, value] of Object.entries(saved)) {
-          if (/^\d{4}-\d{2}$/.test(key) && value) months[key] = { green: validCount(value.green), red: validCount(value.red) };
+          if (/^\d{4}-\d{2}$/.test(key) && value) months[key] = toCounts(value);
         }
         return months;
       }
       // Carry over counts from the single-total version into the current month.
-      const legacy = JSON.parse(localStorage.getItem(LEGACY_KEY) || "{}");
-      const green = validCount(legacy.green);
-      const red = validCount(legacy.red);
-      return green || red ? { [monthKey()]: { green, red } } : {};
+      const legacy = toCounts(JSON.parse(localStorage.getItem(LEGACY_KEY) || "{}"));
+      return totalOf(legacy) ? { [monthKey()]: legacy } : {};
     } catch {
       return {};
     }
@@ -214,10 +231,10 @@
 
   const months = loadMonths();
   let currentMonth = monthKey();
-  let { green, red } = months[currentMonth] || { green: 0, red: 0 };
+  let counts = toCounts(months[currentMonth]);
 
   function saveCounts() {
-    if (green || red) months[currentMonth] = { green, red };
+    if (totalOf(counts)) months[currentMonth] = { ...counts };
     else delete months[currentMonth];
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(months));
@@ -231,13 +248,11 @@
     const key = monthKey();
     if (key !== currentMonth) {
       currentMonth = key;
-      ({ green, red } = months[key] || { green: 0, red: 0 });
+      counts = toCounts(months[key]);
       updateCounts();
     }
     updateMonthLabel();
   }
-  const greenButton = $("green-button");
-  const redButton = $("red-button");
   const overlay = $("calculator-overlay");
   const openButton = $("open-calculator");
   const closeButton = $("close-x");
@@ -248,17 +263,28 @@
   const resetButton = $("reset-counts");
 
   function updateCounts() {
-    const total = green + red;
-    const greenShare = total ? Math.round(green / total * 100) : 0;
-    const redShare = total ? 100 - greenShare : 0;
+    const total = totalOf(counts);
+    const stops = [];
+    let start = 0;
 
-    $("green-count").textContent = green;
-    $("red-count").textContent = red;
+    // Round shares so they always add up to 100% (largest remainder).
+    const exact = TYPES.map(type => total ? counts[type] / total * 100 : 0);
+    const rounded = exact.map(Math.floor);
+    const spare = total ? 100 - rounded.reduce((a, b) => a + b, 0) : 0;
+    exact.map((value, i) => [value - rounded[i], i]).sort((a, b) => b[0] - a[0])
+      .slice(0, spare).forEach(([, i]) => rounded[i] += 1);
+
+    for (const [i, type] of TYPES.entries()) {
+      const share = exact[i];
+      $(`${type}-count`).textContent = counts[type];
+      $(`${type}-percent`).textContent = rounded[i] + "%";
+      stops.push(`var(--${type}) ${start}% ${start + share}%`);
+      start += share;
+    }
     $("total-count").textContent = total;
-    $("green-percent").textContent = greenShare + "%";
-    $("red-percent").textContent = redShare + "%";
-    $("donut").style.setProperty("--green-angle", greenShare + "%");
-    $("donut").setAttribute("aria-label", `Total ${total} calls: ${greenShare}% Green and ${redShare}% Red`);
+    $("donut").style.background = total ? `conic-gradient(${stops.join(", ")})` : "";
+    $("donut").setAttribute("aria-label", `Total ${total} calls: ` +
+      TYPES.map(type => `${LABELS[type]} ${$(`${type}-percent`).textContent}`).join(", "));
   }
 
   function numberFrom(input) {
@@ -294,11 +320,11 @@
     openButton.focus();
   }
 
-  greenButton.addEventListener("click", () => { checkMonth(); green += 1; saveCounts(); updateCounts(); });
-  redButton.addEventListener("click", () => { checkMonth(); red += 1; saveCounts(); updateCounts(); });
+  for (const type of TYPES) {
+    $(`${type}-button`).addEventListener("click", () => { checkMonth(); counts[type] += 1; saveCounts(); updateCounts(); });
+  }
   resetButton.addEventListener("click", () => {
-    green = 0;
-    red = 0;
+    counts = toCounts();
     saveCounts();
     updateCounts();
   });
@@ -318,11 +344,11 @@
     const keys = Object.keys(months);
     if (!keys.includes(currentMonth)) keys.push(currentMonth);
     const rows = keys.sort().map(key => {
-      const { green: g, red: r } = months[key] || { green: 0, red: 0 };
-      const total = g + r;
-      return [key, g, r, total, total ? Math.round(g / total * 100) + "%" : ""].join(",");
+      const c = toCounts(months[key]);
+      const total = totalOf(c);
+      return [key, ...TYPES.map(type => c[type]), total, total ? Math.round(c.green / total * 100) + "%" : ""].join(",");
     });
-    return ["Month,Sales calls,Cease calls,Total,Sales %", ...rows].join("\n");
+    return ["Month,Sales calls,Complaint calls,Cease calls,Total,Sales %", ...rows].join("\n");
   }
 
   async function exportData() {
